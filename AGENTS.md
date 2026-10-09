@@ -1,7 +1,7 @@
 # log_box_persistent_storage_drift Context
 
 ## Purpose:
-This directory provides a persistent storage backend for the LogBox ecosystem using the Drift (formerly Moor) library. It implements the `PersistentDataStorage` interface from the core package, enabling long-term storage, complex querying, and reactive streaming of log entries using SQLite.
+This repository provides a persistent storage backend for the LogBox ecosystem using the Drift (formerly Moor) library. It implements the `PersistentDataStorage` interface from the core package, enabling long-term storage, complex querying, and reactive streaming of log entries using SQLite.
 
 ## Key Components:
 - **lib/src/drift_persistent_storage.dart**: The primary adapter that connects the LogBox storage interface to the Drift database layer. It handles the serialization/deserialization of `EntryModel` objects to and from the database.
@@ -22,3 +22,13 @@ This directory provides a persistent storage backend for the LogBox ecosystem us
 - **Type-Based Decoding**: Uses a `MapObjectDecoder` registry to determine how to reconstruct specific `EntryModel` types from the stored JSON based on a type string.
 - **Reactive Queries**: Leverages Drift's `watch` capabilities to provide real-time updates to the UI via the `fetchStream` and `getStream` methods.
 - **DAO Pattern**: All SQL logic is encapsulated within DAOs to keep the `DriftPersistentStorage` adapter clean and focused on interface implementation.
+
+## Development:
+- **Commands**: Use the `Makefile` (`make` lists targets). `make analyze` and `make format-check` must pass — CI enforces both (infos are fatal).
+- **Code Generation**: Run `make generate` after modifying `@JsonSerializable` models; commit the `.g.dart` files.
+- **Drift Schema Migrations**: After changing Drift tables, run `make generate-migration` to update `drift_schemas/` and the generated migration code; commit both.
+- **Releasing**: Bump `version:` in `pubspec.yaml` and add a matching `## <version>` section to `CHANGELOG.md` in the same PR; merging creates tag `v<version>` via `release.yaml`.
+
+## Known Pitfalls:
+- **Cross-Repo Dependency Bumps**: `log_box` is pinned by git tag (`ref: v<version>`), so CI never sees an unreleased core change. For a shared-constraint bump (e.g. rxdart), land and release it in [log_box](https://github.com/robzimpulse/log_box) first, then update `ref:` and the constraint here in its own PR. See core's `AGENTS.md` → "Cross-Repo Dependency Bumps".
+- **Pushing Workflow Changes**: Pushing files under `.github/workflows/` requires a GitHub token with the `workflow` scope. If a push is rejected with "refusing to allow an OAuth App to create or update workflow", run `gh auth refresh -h github.com -s workflow` and make git use that token (`gh auth setup-git`) — a stale macOS Keychain token will otherwise keep failing.
