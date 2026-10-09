@@ -8,8 +8,8 @@ part 'database.g.dart';
 
 @DriftDatabase(tables: [DataTables], daos: [DataDao])
 class LogBoxPersistentDatabase extends _$LogBoxPersistentDatabase {
-
-  LogBoxPersistentDatabase({required Executor executor}) : super(executor.executor);
+  LogBoxPersistentDatabase({required Executor executor})
+    : super(executor.executor);
 
   @override
   int get schemaVersion => 1;
