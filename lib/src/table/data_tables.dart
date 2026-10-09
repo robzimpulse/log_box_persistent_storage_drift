@@ -5,7 +5,6 @@ import '../mixin/auto_timestamp_mixin.dart';
 
 @DataClassName('DataDrift')
 class DataTables extends Table with AutoTimestampTable, AutoIntegerIdTable {
-
   TextColumn get uid => text().named('uid').nullable()();
 
   TextColumn get type => text().named('type').nullable()();
@@ -13,5 +12,7 @@ class DataTables extends Table with AutoTimestampTable, AutoIntegerIdTable {
   TextColumn get json => text().named('json').nullable()();
 
   @override
-  List<Set<Column>>? get uniqueKeys => [{uid}];
+  List<Set<Column>>? get uniqueKeys => [
+    {uid},
+  ];
 }
